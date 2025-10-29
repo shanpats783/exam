@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web:
+    # Use 'build: .' if you have a Dockerfile in the same directory.
+    # Otherwise, use 'image: <your-image-name>' to pull a pre-built image.
+    build: . 
+    ports:
+      - "80:80" # Map host port 80 to container port 80
+    volumes:
+      - .:/usr/src/app # Mount your local directory into the container
+    depends_on:
+      - db # Ensure the database service starts before the web service
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/database
+  
+  db:
+    image: postgres:15.6-alpine # Use the official PostgreSQL image
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist database data
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=database
+
+volumes:
+  postgres_data:
